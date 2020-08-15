@@ -19,7 +19,7 @@ koa-body-plus [![Build Status](https://travis-ci.org/dlau/koa-body.svg?branch=ko
 > 在npm的发布名称koa-body-plus
 
 
-> A full-featured [`koa`](https://github.com/koajs/koa) body parser middleware. Supports `multipart`, `urlencoded`, and `json` request bodies. Provides the same functionality as Express's bodyParser - [`multer`](https://github.com/expressjs/multer).
+> A full-featured [`koa`](https://github.com/koajs/koa) body parser middleware. Supports `multipart`, `urlencoded`, `json` any other format request bodies. Provides the same functionality as Express's bodyParser - [`multer`](https://github.com/expressjs/multer).
 
 ## Install
 >Install with [npm](https://github.com/npm/npm)
@@ -44,13 +44,13 @@ npm install koa-body-plus
 ## Hello World - Quickstart
 
 ```sh
-npm install koa koa-body # Note that Koa requires Node.js 7.6.0+ for async/await support
+npm install koa koa-body-plus # Note that Koa requires Node.js 7.6.0+ for async/await support
 ```
 
 index.js:
 ```js
 const Koa = require('koa');
-const koaBody = require('koa-body');
+const koaBody = require('koa-body-plus');
 
 const app = new Koa();
 
@@ -87,7 +87,7 @@ It's generally better to only parse the body as needed, if using a router that s
 const Koa = require('koa');
 const app = new Koa();
 const router = require('koa-router')();
-const koaBody = require('koa-body');
+const koaBody = require('koa-body-plus');
 
 router.post('/users', koaBody(),
   (ctx) => {
@@ -109,7 +109,7 @@ For unsupported text body type, for example, `text/xml`, you can use the unparse
 ```js
 // xml-parse.js:
 const Koa = require('koa');
-const koaBody = require('koa-body');
+const koaBody = require('koa-body-plus');
 const convert = require('xml-js');
 
 const app = new Koa();
@@ -189,4 +189,4 @@ $ npm test
 ```
 
 ## License
-The MIT License, 2014 [Charlike Mike Reagent](https://github.com/tunnckoCore) ([@tunnckoCore](https://twitter.com/tunnckoCore)) and [Daryl Lau](https://github.com/dlau) ([@daryllau](https://twitter.com/daryllau))
+The MIT License, 2020 [Charlike Mike Reagent](https://github.com/tunnckoCore) ([@tunnckoCore](https://twitter.com/tunnckoCore))  [Daryl Lau](https://github.com/dlau) ([@daryllau](https://twitter.com/daryllau)) and [Mustang Yu](https://github.com/yuenshui)([@于恩水](https://weibo.com/enshui))
