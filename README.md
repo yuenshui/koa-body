@@ -1,5 +1,5 @@
 
-koa-body-plus [![Build Status](https://travis-ci.org/yuenshui/koa-body-plus.svg?branch=master&status=passed)](https://travis-ci.org/yuenshui/koa-body-plus) [![Dependencies Status](https://david-dm.org/yuenshui/koa-body-plus/status.svg)](https://david-dm.org/yuenshui/koa-body-plus) [![KoaJs Slack](https://img.shields.io/badge/Koa.Js-Slack%20Channel-Slack.svg?longCache=true)](https://communityinviter.com/apps/koa-js/koajs)
+koa-body-plus [![Build Status](https://travis-ci.org/yuenshui/koa-body-plus.svg?branch=master)](https://travis-ci.org/yuenshui/koa-body-plus) [![KoaJs Slack](https://img.shields.io/badge/Koa.Js-Slack%20Channel-Slack.svg?longCache=true)](https://communityinviter.com/apps/koa-js/koajs)
 ================
 
 > This object forked from https://github.com/dlau/koa-body on 2020-08-15
