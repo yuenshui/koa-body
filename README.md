@@ -37,6 +37,10 @@ npm install koa-body-plus
   * **application/vnd.api+json**
   * **application/csp-report**
   * **text/xml**
+
+  * **image/***
+> And any other requests
+
 - option for patch to Koa or Node, or either
 - file uploads
 - body, fields and files size limiting
@@ -76,6 +80,36 @@ Date: Wed, 03 May 2017 02:09:44 GMT
 Connection: keep-alive
 
 Request Body: {"name":"test"}%
+```
+---
+index.js:
+```js
+const Koa = require('koa');
+const koaBody = require('koa-body-plus');
+
+const app = new Koa();
+
+app.use(koaBody());
+app.use(ctx => {
+  ctx.body = ctx.request.file;
+});
+
+app.listen(3001);
+```
+
+```sh
+curl -v http://localhost:3001/ -H"content-type: application/x-gzip" -X PUT -d "@redis-5.0.8.tar.gz"
+```
+
+Output:
+```text
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 119
+Date: Sun, 16 Aug 2020 01:21:49 GMT
+Connection: keep-alive
+
+{"name":"","path":"C:\\Users\\Mustang\\AppData\\Local\\TempqQ0oyOInGOOGt4Ss","size":950107,"type":"application/x-gzip"}
 ```
 
 **For a more comprehensive example, see** `examples/multipart.js`
