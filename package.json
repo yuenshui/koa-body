@@ -1,6 +1,6 @@
 {
   "name": "koa-body-plus",
-  "version": "4.2.0.1",
+  "version": "4.2.0.0",
   "description": "A Koa body parser middleware. Supports multipart, urlencoded JSON and any other format request bodies.",
   "main": "index.js",
   "types": "./index.d.ts",

@@ -1,8 +1,9 @@
 /**
- * koa-body - index.js
+ * koa-body-plus - index.js
  * Copyright(c) 2014
  * MIT Licensed
  *
+ * @author  Mustang Yu
  * @author  Daryl Lau (@dlau)
  * @author  Charlike Mike Reagent (@tunnckoCore)
  * @api private
@@ -17,7 +18,8 @@
 const buddy = require('co-body');
 const forms = require('formidable');
 const symbolUnparsed = require('./unparsed.js');
-
+const os = require('os');
+const fs = require('fs');
 /**
  * Expose `requestbody()`.
  */
@@ -41,11 +43,12 @@ function requestbody(opts) {
   opts = opts || {};
   opts.onError = 'onError' in opts ? opts.onError : false;
   opts.patchNode = 'patchNode' in opts ? opts.patchNode : false;
-  opts.patchKoa = 'patchKoa' in opts ? opts.patchKoa : true;
+  opts.patchKoa = 'patchKoa' in opts ? opts.patchKoa : false;
   opts.multipart = 'multipart' in opts ? opts.multipart : false;
   opts.urlencoded = 'urlencoded' in opts ? opts.urlencoded : true;
   opts.json = 'json' in opts ? opts.json : true;
   opts.text = 'text' in opts ? opts.text : true;
+  opts.bin = 'bin' in opts ? opts.bin : true;
   opts.encoding = 'encoding' in opts ? opts.encoding : 'utf-8';
   opts.jsonLimit = 'jsonLimit' in opts ? opts.jsonLimit : '1mb';
   opts.jsonStrict = 'jsonStrict' in opts ? opts.jsonStrict : true;
@@ -54,6 +57,7 @@ function requestbody(opts) {
   opts.formidable = 'formidable' in opts ? opts.formidable : {};
   opts.includeUnparsed = 'includeUnparsed' in opts ? opts.includeUnparsed : false
   opts.textLimit = 'textLimit' in opts ? opts.textLimit : '56kb';
+  opts.binLimit = 'binLimit' in opts ? opts.binLimit : '1mb';
 
   // @todo: next major version, opts.strict support should be removed
   if (opts.strict && opts.parsedMethods) {
@@ -99,6 +103,8 @@ function requestbody(opts) {
           });
         } else if (opts.multipart && ctx.is('multipart')) {
           bodyPromise = formy(ctx, opts.formidable);
+        } else if (opts.bin)  {
+          bodyPromise = saveBinaryFile(ctx, opts);
         }
       } catch (parsingError) {
         if (typeof opts.onError === 'function') {
@@ -120,10 +126,7 @@ function requestbody(opts) {
     })
     .then(function(body) {
       if (opts.patchNode) {
-        if (isMultiPart(ctx, opts)) {
-          ctx.req.body = body.fields;
-          ctx.req.files = body.files;
-        } else if (opts.includeUnparsed) {
+        if (opts.includeUnparsed) {
           ctx.req.body = body.parsed || {};
           if (! ctx.is('text/*')) {
             ctx.req.body[symbolUnparsed] = body.raw;
@@ -133,10 +136,7 @@ function requestbody(opts) {
         }
       }
       if (opts.patchKoa) {
-        if (isMultiPart(ctx, opts)) {
-          ctx.request.body = body.fields;
-          ctx.request.files = body.files;
-        } else if (opts.includeUnparsed) {
+        if (opts.includeUnparsed) {
           ctx.request.body = body.parsed || {};
           if (! ctx.is('text/*')) {
             ctx.request.body[symbolUnparsed] = body.raw;
@@ -144,6 +144,10 @@ function requestbody(opts) {
         } else {
           ctx.request.body = body;
         }
+      }
+      if (isMultiPart(ctx, opts)) {
+        ctx.req.body = body.fields;
+        ctx.req.files = body.files;
       }
       return next();
     })
@@ -208,4 +212,46 @@ function formy(ctx, opts) {
     }
     form.parse(ctx.req);
   });
+}
+
+function saveBinaryFile(ctx, opts) {
+  let encoding = ctx.request.headers["content-encoding"] || opts.encoding;
+  if (ctx.is('image/*')) {
+    encoding = "binary"
+  }
+  return buddy.text(ctx, {
+    encoding: encoding,
+    limit: opts.binLimit,
+    returnRawBody: true
+  })
+  .then(function (body) {
+    console.log(os.tmpdir());
+    let tmpdir = os.tmpdir();
+    let filePath
+    while(true) {
+      filePath = tmpdir + randomString(16);
+      if(!fs.existsSync(filePath)) {
+        break;
+      }
+    }
+    fs.writeFileSync(filePath, body.raw, {
+      encoding: encoding
+    });
+    ctx.request.file = {
+      name: ctx.req.headers['file-name'] || "",
+      path: filePath,
+      size: body.raw.length,
+      type: ctx.req.headers['content-type'] || "binary",
+    };
+    return body;
+  });
+}
+
+const keyDoc = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+function randomString(num) {
+  let str = "";
+  for(let i = 0; i < num; i++) {
+    str += keyDoc[Math.floor(Math.random() * 64)];
+  }
+  return str;
 }
