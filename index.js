@@ -43,7 +43,7 @@ function requestbody(opts) {
   opts = opts || {};
   opts.onError = 'onError' in opts ? opts.onError : false;
   opts.patchNode = 'patchNode' in opts ? opts.patchNode : false;
-  opts.patchKoa = 'patchKoa' in opts ? opts.patchKoa : false;
+  opts.patchKoa = 'patchKoa' in opts ? opts.patchKoa : true;
   opts.multipart = 'multipart' in opts ? opts.multipart : false;
   opts.urlencoded = 'urlencoded' in opts ? opts.urlencoded : true;
   opts.json = 'json' in opts ? opts.json : true;
@@ -126,7 +126,13 @@ function requestbody(opts) {
     })
     .then(function(body) {
       if (opts.patchNode) {
-        if (opts.includeUnparsed) {
+        if (ctx.is('text/*') || ctx.is('urlencoded') || ctx.is('jsonTypes')) {
+          ctx.req.body = body.parsed;
+        }
+        if (isMultiPart(ctx, opts)) {
+          ctx.req.body = body.fields;
+          ctx.req.files = body.files;
+        } else if (opts.includeUnparsed) {
           ctx.req.body = body.parsed || {};
           if (! ctx.is('text/*')) {
             ctx.req.body[symbolUnparsed] = body.raw;
@@ -136,7 +142,13 @@ function requestbody(opts) {
         }
       }
       if (opts.patchKoa) {
-        if (opts.includeUnparsed) {
+        if (ctx.is('text/*') || ctx.is('urlencoded') || ctx.is('jsonTypes')) {
+          ctx.request.body = body.parsed;
+        }
+        if (isMultiPart(ctx, opts)) {
+          ctx.request.body = body.fields;
+          ctx.request.files = body.files;
+        } else if (opts.includeUnparsed) {
           ctx.request.body = body.parsed || {};
           if (! ctx.is('text/*')) {
             ctx.request.body[symbolUnparsed] = body.raw;
@@ -144,10 +156,6 @@ function requestbody(opts) {
         } else {
           ctx.request.body = body;
         }
-      }
-      if (isMultiPart(ctx, opts)) {
-        ctx.req.body = body.fields;
-        ctx.req.files = body.files;
       }
       return next();
     })
@@ -225,8 +233,7 @@ function saveBinaryFile(ctx, opts) {
     returnRawBody: true
   })
   .then(function (body) {
-    console.log(os.tmpdir());
-    let tmpdir = os.tmpdir();
+    let tmpdir = os.tmpdir() + "/";
     let filePath
     while(true) {
       filePath = tmpdir + randomString(16);

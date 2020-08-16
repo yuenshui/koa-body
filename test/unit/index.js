@@ -1,9 +1,9 @@
 /*!
- * koa-body <https://github.com/dlau/koa-body>
+ * koa-body-plus <https://github.com/yuenshui/koa-body-plus>
  * A koa body parser middleware with support for `multipart/form-data`,
  * `application/json` or `application/x-www-form-urlencoded` request bodies.
  *
- * Copyright (c) 2014 Charlike Mike Reagent, Daryl Lau, contributors.
+ * Copyright (c) 2014 Charlike Mike Reagent, Daryl Lau, Mustang Yu, contributors.
  * Released under the MIT license.
  */
 
@@ -22,7 +22,7 @@ const sinon = require('sinon');
 
 const unparsed = require('../../unparsed.js');
 
-describe('koa-body', () => {
+describe('koa-body-plus', () => {
   let database;
   let router;
   let app;
@@ -75,6 +75,16 @@ describe('koa-body', () => {
       .post('/echo_body', (ctx, next) => {
         ctx.status = 200;
         ctx.body = ctx.request.body;
+      })
+      .put('/echo_body', (ctx, next) => {
+        console.log("put echo_body:", ctx.url);
+        ctx.status = 200;
+        ctx.body = ctx.request.body;
+      })
+      .put('/echo_file', (ctx, next) => {
+        console.log("put echo_file:", ctx.url);
+        ctx.status = 200;
+        ctx.body = ctx.request.file;
       })
       .delete('/users/:user', (ctx, next) => {
         const user = ctx.params.user;
@@ -260,6 +270,32 @@ describe('koa-body', () => {
 
         res.body.user.should.have.properties(mostRecentUser);
         res.body.user.should.have.properties({ name: 'example', followers: '41' });
+
+        done();
+      });
+  });
+
+  
+
+
+  it('accept the file returned by PUT',  (done) => {
+    app.use(koaBody());
+    app.use(router.routes());
+
+    let fileContent = fs.readFileSync(__dirname + '/index.js');
+    request(http.createServer(app.callback()))
+      .put('/echo_file')
+      .type('image/png')
+      .send(fileContent)
+      .expect(200)
+      .end( (err, res) => {
+        if (err) return done(err);
+        
+        res.body.path.should.not.be.Undefined();
+        res.body.size.should.not.be.Undefined();
+        res.body.size.should.be.a.equal(fileContent.length);
+        res.body.type.should.not.be.Undefined();
+        res.body.type.should.be.a.equal('image/png');
 
         done();
       });
