@@ -1,6 +1,6 @@
 {
   "name": "koa-body-plus",
-  "version": "4.2.0.2",
+  "version": "4.2.0-3",
   "description": "A Koa body parser middleware. Supports multipart, urlencoded JSON and any other format request bodies.",
   "main": "index.js",
   "types": "./index.d.ts",
@@ -9,11 +9,7 @@
     "examples-multer": "node examples/multer.js",
     "examples-koa-router": "node examples/koa-router.js"
   },
-  "author": {
-    "name": "Mustang Yu",
-    "email": "yuenshui@gmail.com",
-    "url": "https://github.com/yuenshui"
-  },
+  "author": "Mustang Yu <yuenshui@gmail.com> (https://github.com/yuenshui)",
   "repository": {
     "type": "git",
     "url": "git://github.com/yuenshui/koa-body-plus.git"
@@ -50,21 +46,17 @@
     "supertest": "3.1.0"
   },
   "contributors": [
-    {
-      "name": "Mustang Yu",
-      "email": "yuenshui@gmail.com",
-      "url": "https://github.com/yuenshui"
-    },
-    {
-      "name": "Daryl Lau",
-      "email": "dlau00@gmail.com",
-      "url": "https://github.com/dlau"
-    },
-    {
-      "name": "Charlike Mike Reagent",
-      "email": "mameto_100@mail.bg",
-      "url": "https://github.com/tunnckoCore"
-    }
+    "Mustang Yu <yuenshui@gmail.com> (https://github.com/yuenshui)",
+    "Daryl Lau <dlau00@gmail.com> (https://github.com/dlau)",
+    "Charlike Mike Reagent <mameto_100@mail.bg> (https://github.com/tunnckoCore)"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yuenshui/koa-body-plus/issues"
+  },
+  "homepage": "https://github.com/yuenshui/koa-body-plus#readme",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  }
 }
