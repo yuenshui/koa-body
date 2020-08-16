@@ -1,5 +1,5 @@
 
-koa-body-plus [![Build Status](https://travis-ci.org/dlau/koa-body.svg?branch=koa2)](https://travis-ci.org/dlau/koa-body) [![Dependencies Status](https://david-dm.org/dlau/koa-body/status.svg)](https://david-dm.org/dlau/koa-body) [![KoaJs Slack](https://img.shields.io/badge/Koa.Js-Slack%20Channel-Slack.svg?longCache=true)](https://communityinviter.com/apps/koa-js/koajs)
+koa-body-plus [![Build Status](https://travis-ci.org/yuenshui/koa-body-plus.svg?branch=koa2)](https://travis-ci.org/yuenshui/koa-body-plus) [![Dependencies Status](https://david-dm.org/dlau/koa-body-plus/status.svg)](https://david-dm.org/yuenshui/koa-body-plus) [![KoaJs Slack](https://img.shields.io/badge/Koa.Js-Slack%20Channel-Slack.svg?longCache=true)](https://communityinviter.com/apps/koa-js/koajs)
 ================
 
 > This object forked from https://github.com/dlau/koa-body on 2020-08-15
@@ -174,18 +174,20 @@ Request Body: {"declaration":{"attributes":{"version":"1.0"}},"elements":[{"type
 ```
 
 ## Options
-> Options available for `koa-body`. Four custom options, and others are from `raw-body` and `formidable`.
+> Options available for `koa-body-plus`. Four custom options, and others are from `raw-body` and `formidable`.
 
 - `patchNode` **{Boolean}** Patch request body to Node's `ctx.req`, default `false`
-- `patchKoa` **{Boolean}** Patch request body to Koa's `ctx.request`, default `true`
+- `patchKoa` **{Boolean}** Patch request body to Koa's `ctx.request`, default `false`
 - `jsonLimit` **{String|Integer}** The byte (if integer) limit of the JSON body, default `1mb`
 - `formLimit` **{String|Integer}** The byte (if integer) limit of the form body, default `56kb`
 - `textLimit` **{String|Integer}** The byte (if integer) limit of the text body, default `56kb`
+- `binLimit` **{String|Integer}** The byte (if integer) limit of the binary body, default `1mb`
 - `encoding` **{String}** Sets encoding for incoming form fields, default `utf-8`
 - `multipart` **{Boolean}** Parse multipart bodies, default `false`
 - `urlencoded` **{Boolean}** Parse urlencoded bodies, default `true`
 - `text` **{Boolean}** Parse text bodies, such as XML, default `true`
 - `json` **{Boolean}** Parse JSON bodies, default `true`
+- `bin` **{Boolean}** Parse binary bodies, default `true`
 - `jsonStrict` **{Boolean}** Toggles co-body strict mode; if set to true - only parses arrays or objects, default `true`
 - `includeUnparsed` **{Boolean}** Toggles co-body returnRawBody option; if set to true, for form encodedand and JSON requests the raw, unparsed requesty body will be attached to `ctx.request.body` using a `Symbol`, default `false`
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
@@ -196,13 +198,14 @@ Request Body: {"declaration":{"attributes":{"version":"1.0"}},"elements":[{"type
 ## A note about `parsedMethods`
 > see [http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3](http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3)
 - `GET`, `HEAD`, and `DELETE` requests have no defined semantics for the request body, but this doesn't mean they may not be valid in certain use cases.
-- koa-body is strict by default, parsing only `POST`, `PUT`, and `PATCH` requests
+- koa-body-plus is strict by default, parsing only `POST`, `PUT`, and `PATCH` requests
 
 ## File Support
 Uploaded files are accessible via `ctx.request.files`.
+Requests other than multipart, urlencoded, and JSON can be accessed through the `ctx.request.file` visit
 
 ## A note about unparsed request bodies
-Some applications require crytopgraphic verification of request bodies, for example webhooks from slack or stripe. The unparsed body can be accessed if `includeUnparsed` is `true` in koa-body's options. When enabled, import the symbol for accessing the request body from `unparsed = require('koa-body/unparsed.js')`, or define your own accessor using `unparsed = Symbol.for('unparsedBody')`. Then the unparsed body is available using `ctx.request.body[unparsed]`.
+Some applications require crytopgraphic verification of request bodies, for example webhooks from slack or stripe. The unparsed body can be accessed if `includeUnparsed` is `true` in koa-body-plus's options. When enabled, import the symbol for accessing the request body from `unparsed = require('koa-body-plus/unparsed.js')`, or define your own accessor using `unparsed = Symbol.for('unparsedBody')`. Then the unparsed body is available using `ctx.request.body[unparsed]`.
 
 ## Some options for formidable
 > See [node-formidable](https://github.com/felixge/node-formidable) for a full list of options
